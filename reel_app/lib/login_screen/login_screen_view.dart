@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:reel_app/signup_screen/signup_screen_view.dart';
 
 class LoginView extends StatefulWidget {
   const LoginView({Key? key}) : super(key: key);
@@ -52,7 +53,9 @@ class _LoginViewState extends State<LoginView> {
               ),
             ),
             InkWell(
-              onTap: () {},
+              onTap: () {
+                Navigator.push(context, MaterialPageRoute(builder: (context) => const SignupView()));
+              },
               child: Text(
                 'SignUp',
                 style: TextStyle(
