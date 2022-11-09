@@ -85,7 +85,7 @@ class _EditViewState extends State<EditView> {
           hintText: hintText
         ),
       ),
-    )
+    );
   }
 
 }
