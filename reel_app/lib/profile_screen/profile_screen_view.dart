@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:reel_app/edit_profile_screen/edit_profile_view.dart';
 
 class ProfileView extends StatefulWidget {
   const ProfileView({Key? key}) : super(key: key);
@@ -80,19 +81,28 @@ class _ProfileViewState extends State<ProfileView> {
   }
 
   Widget customButton(bool isCurrentUser, ) {
-    return Container(
-      height: 30.h,
-      width: 310.w,
-      decoration: BoxDecoration(
-        color: isCurrentUser ? Colors.grey.shade300 : Colors.blue,
-        borderRadius: BorderRadius.circular(10),
-      ),
-      child: Text(
-        isCurrentUser ? 'Edit Profile' : 'Follow',
-        style: TextStyle(
-          fontSize: 15.sp,
-          fontWeight: FontWeight.w500,
-          color: isCurrentUser ? Colors.black : Colors.white,
+    return InkWell(
+      onTap: () {
+        if(isCurrentUser) {
+          Navigator.push(context, MaterialPageRoute(builder: (context) => const EditView()));
+        } else {
+          //Follow functionality
+        }
+      },
+      child: Container(
+        height: 30.h,
+        width: 310.w,
+        decoration: BoxDecoration(
+          color: isCurrentUser ? Colors.grey.shade300 : Colors.blue,
+          borderRadius: BorderRadius.circular(10),
+        ),
+        child: Text(
+          isCurrentUser ? 'Edit Profile' : 'Follow',
+          style: TextStyle(
+            fontSize: 15.sp,
+            fontWeight: FontWeight.w500,
+            color: isCurrentUser ? Colors.black : Colors.white,
+          ),
         ),
       ),
     );
