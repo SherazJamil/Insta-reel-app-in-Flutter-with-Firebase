@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "294830804067",
+    "project_id": "insta-reel-e23c4",
+    "storage_bucket": "insta-reel-e23c4.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:294830804067:android:6aaccdb869d27356003c56",
+        "android_client_info": {
+          "package_name": "com.example.reel_app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "294830804067-4fpmisbbju5rq2oij8ksqd6sgen8dd4f.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAHUe3n3-u3WyLcwzfrpFE759E6JhT2Trw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "294830804067-4fpmisbbju5rq2oij8ksqd6sgen8dd4f.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
