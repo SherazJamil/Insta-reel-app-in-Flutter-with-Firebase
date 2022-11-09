@@ -4,6 +4,8 @@ import 'package:reel_app/loading_screen/loading_screen.dart';
 import 'package:reel_app/login_screen/login_screen_view.dart';
 import 'package:reel_app/signup_screen/signup_screen_functions.dart';
 
+import '../home_screen/home_screen_view.dart';
+
 class SignupView extends StatefulWidget {
   const SignupView({Key? key}) : super(key: key);
 
@@ -25,6 +27,7 @@ class _SignupViewState extends State<SignupView> {
       bool accountCreatedSuccessfully = await SignupFunctions.createAccount(email.text.trim(), password.text.trim());
       if (accountCreatedSuccessfully) {
         print('Account created successfully');
+        Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => const HomeView()), (route) => false);
       } else {
         print('Something went wrong');
       }

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:reel_app/home_screen/home_screen_view.dart';
 import 'package:reel_app/loading_screen/loading_screen.dart';
 import 'package:reel_app/login_screen/login_screen_functions.dart';
 import 'package:reel_app/signup_screen/signup_screen_view.dart';
@@ -25,6 +26,7 @@ class _LoginViewState extends State<LoginView> {
       bool loginSuccessful = await LoginFunctions.login(email.text.trim(), password.text.trim());
       if (loginSuccessful) {
         print('Login Successfully');
+        Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => const HomeView()), (route) => false);
       } else {
         print('Something went wrong');
       }
