@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:reel_app/login_screen/login_screen_functions.dart';
+import 'package:reel_app/profile_screen/profile_screen_view.dart';
 
 class HomeView extends StatefulWidget {
   const HomeView({Key? key}) : super(key: key);
@@ -17,6 +18,11 @@ class _HomeViewState extends State<HomeView> {
           'Home',
         ),
         actions: [
+          IconButton(
+            onPressed: () {
+              Navigator.push(context, MaterialPageRoute(builder: (context) => const ProfileView()));
+            },
+            icon: const Icon(Icons.account_circle_sharp),),
           IconButton(
             onPressed: () {
               LoginFunctions.logout(context);
