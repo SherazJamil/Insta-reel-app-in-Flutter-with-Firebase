@@ -1,6 +1,10 @@
+import 'dart:html';
+
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:reel_app/edit_profile_screen/edit_profile_view.dart';
+import 'package:reel_app/followers_following_screen/followers_following_screen_view.dart';
 import 'package:reel_app/loading_screen/loading_screen.dart';
 import 'package:reel_app/model_classes/user_model.dart';
 import 'package:reel_app/profile_screen/profile_screens_function.dart';
@@ -8,7 +12,8 @@ import 'package:reel_app/search_screen/search_view.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class ProfileView extends StatefulWidget {
-  const ProfileView({Key? key}) : super(key: key);
+  final String userUid;
+   const ProfileView({super.key, required this.userUid});
 
   @override
   State<ProfileView> createState() => _ProfileViewState();
@@ -17,6 +22,10 @@ class ProfileView extends StatefulWidget {
 class _ProfileViewState extends State<ProfileView> {
 
   UserModel? userModel;
+  bool isAlreadyFollowed = false;
+
+  bool get isCurrentUser =>
+      FirebaseAuth.instance.currentUser!.uid == widget.userUid;
 
   @override
   void initState() {
@@ -26,7 +35,8 @@ class _ProfileViewState extends State<ProfileView> {
   }
 
   void getCurrentUserData() async {
-     userModel = await ProfileFunctions.getUserDetails();
+     userModel = await ProfileFunctions.getUserDetails(widget.userUid);
+     isAlreadyFollowed = await ProfileFunctions.checkIfAlreadyFollowed(widget.userUid);
      setState(() {});
   }
 
@@ -79,9 +89,25 @@ class _ProfileViewState extends State<ProfileView> {
                       ),
                     ),
                   ),
-                  showData('Posts', userModel!.posts.toString()),
-                  showData('Followers', userModel!.followers.toString()),
-                  showData('Following', userModel!.following.toString()),
+                  showData('Posts', userModel!.posts.toString(), null),
+                  showData('Followers', userModel!.followers.toString(),
+                      () {
+                    Navigator.push(context,
+                        MaterialPageRoute(builder: (context) => FollowersFollowingView(
+                          title: 'Followers',
+                          userUid: userModel!.uid,
+                        )));
+                      }
+                  ),
+                  showData('Following', userModel!.following.toString(),
+                      () {
+                        Navigator.push(context,
+                            MaterialPageRoute(builder: (context) => FollowersFollowingView(
+                              title: 'Following',
+                              userUid: userModel!.uid,
+                            )));
+                      }
+                  ),
                 ],
               ),
               Padding(
@@ -137,7 +163,7 @@ class _ProfileViewState extends State<ProfileView> {
               SizedBox(
                 height: 30.h,
               ),
-              customButton(true),
+              customButton(isCurrentUser),
               SizedBox(
                 height: 30.h,
               ),
@@ -167,9 +193,23 @@ class _ProfileViewState extends State<ProfileView> {
     return InkWell(
       onTap: () {
         if(isCurrentUser) {
-          Navigator.push(context, MaterialPageRoute(builder: (context) => EditView(userModel: userModel!,)));
+          Navigator.push(context, MaterialPageRoute(
+              builder: (context) => EditView(userModel: userModel!,)));
         } else {
-          //Follow functionality
+         if(isAlreadyFollowed) {
+           setState(() {
+             userModel!.followers = userModel!.followers - 1;
+             isAlreadyFollowed = false;
+           });
+           ProfileFunctions.onFollowAndUnfollow(false, widget.userUid);
+         } else {
+           setState(() {
+             userModel!.followers = userModel!.followers + 1;
+             isAlreadyFollowed = true;
+           });
+
+           ProfileFunctions.onFollowAndUnfollow(true, widget.userUid);
+         }
         }
       },
       child: Container(
@@ -180,7 +220,7 @@ class _ProfileViewState extends State<ProfileView> {
           borderRadius: BorderRadius.circular(10),
         ),
         child: Text(
-          isCurrentUser ? 'Edit Profile' : 'Follow',
+          isCurrentUser ? 'Edit Profile' : isAlreadyFollowed ? 'UnFollow' : 'Follow',
           style: TextStyle(
             fontSize: 15.sp,
             fontWeight: FontWeight.w500,
@@ -191,24 +231,27 @@ class _ProfileViewState extends State<ProfileView> {
     );
   }
 
-  Widget showData(String title, String value) {
-    return Column(
-      children: [
-        Text(
-            value,
-          style: TextStyle(
-            fontSize: 22.sp,
-            fontWeight: FontWeight.w500
+  Widget showData(String title, String value, ontap) {
+    return InkWell(
+      onTap: ontap,
+      child: Column(
+        children: [
+          Text(
+              value,
+            style: TextStyle(
+              fontSize: 22.sp,
+              fontWeight: FontWeight.w500
+            ),
           ),
-        ),
-        Text(
-            title,
-          style: TextStyle(
-            fontSize: 17.sp,
-            fontWeight: FontWeight.w500,
+          Text(
+              title,
+            style: TextStyle(
+              fontSize: 17.sp,
+              fontWeight: FontWeight.w500,
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 

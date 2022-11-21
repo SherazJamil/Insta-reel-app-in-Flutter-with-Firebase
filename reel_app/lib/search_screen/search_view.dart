@@ -39,7 +39,9 @@ class SearchView extends SearchDelegate {
         itemBuilder: (context, index) {
           return ListTile(
             onTap: () {
-              Navigator.push(context, MaterialPageRoute(builder: (context) => ProfileView()));
+              Navigator.push(context, MaterialPageRoute(builder: (context) => ProfileView(
+                userUid: userModel[index].uid,
+              )));
             },
             leading: CircleAvatar(
               backgroundImage: NetworkImage(
@@ -62,7 +64,9 @@ class SearchView extends SearchDelegate {
         itemBuilder: (context, index) {
           return ListTile(
             onTap: () {
-              Navigator.push(context, MaterialPageRoute(builder: (context) => ProfileView()));
+              Navigator.push(context, MaterialPageRoute(builder: (context) => ProfileView(
+                userUid: userModel[index].uid,
+              )));
             },
             leading: CircleAvatar(
               backgroundImage: NetworkImage(

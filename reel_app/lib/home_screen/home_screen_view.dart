@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:reel_app/login_screen/login_screen_functions.dart';
 import 'package:reel_app/profile_screen/profile_screen_view.dart';
@@ -20,7 +21,9 @@ class _HomeViewState extends State<HomeView> {
         actions: [
           IconButton(
             onPressed: () {
-              Navigator.push(context, MaterialPageRoute(builder: (context) => const ProfileView()));
+              Navigator.push(
+                  context, MaterialPageRoute(
+                  builder: (context) => ProfileView(userUid: FirebaseAuth.instance.currentUser!.uid,)));
             },
             icon: const Icon(Icons.account_circle_sharp),),
           IconButton(
