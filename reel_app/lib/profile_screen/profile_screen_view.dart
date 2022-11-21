@@ -1,6 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:reel_app/edit_profile_screen/edit_profile_view.dart';
+import 'package:reel_app/loading_screen/loading_screen.dart';
+import 'package:reel_app/model_classes/user_model.dart';
+import 'package:reel_app/profile_screen/profile_screens_function.dart';
+import 'package:reel_app/search_screen/search_view.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class ProfileView extends StatefulWidget {
   const ProfileView({Key? key}) : super(key: key);
@@ -10,10 +15,25 @@ class ProfileView extends StatefulWidget {
 }
 
 class _ProfileViewState extends State<ProfileView> {
+
+  UserModel? userModel;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    getCurrentUserData();
+  }
+
+  void getCurrentUserData() async {
+     userModel = await ProfileFunctions.getUserDetails();
+     setState(() {});
+  }
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
-      child: Scaffold(
+      child: userModel == null ? const LoadingScreen() : Scaffold(
         body: SizedBox(
           width: double.infinity,
           child: Column(
@@ -21,15 +41,21 @@ class _ProfileViewState extends State<ProfileView> {
               Padding(
                 padding: EdgeInsets.all(10.sp),
                 child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  //mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      'user name',
+                      userModel!.username,
                       style: TextStyle(
                         fontSize: 20.sp,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
+                    const Expanded(child: SizedBox()),
+                    IconButton(
+                        onPressed: () {
+                          showSearch(context: context, delegate: SearchView());
+                        },
+                        icon: const Icon(Icons.search_sharp)),
                     IconButton(
                         onPressed: () {},
                         icon: const Icon(Icons.add)),
@@ -42,15 +68,71 @@ class _ProfileViewState extends State<ProfileView> {
                   Container(
                     height: 90.h,
                     width: 90.w,
-                    decoration: const BoxDecoration(
+                    decoration: BoxDecoration(
                       shape: BoxShape.circle,
                       color: Colors.grey,
+                      image: DecorationImage(
+                        fit: BoxFit.cover,
+                        image: NetworkImage(
+                          userModel!.profileImage,
+                        ),
+                      ),
                     ),
                   ),
-                  showData('Posts', '0'),
-                  showData('Followers', '0'),
-                  showData('Following', '0'),
+                  showData('Posts', userModel!.posts.toString()),
+                  showData('Followers', userModel!.followers.toString()),
+                  showData('Following', userModel!.following.toString()),
                 ],
+              ),
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: 15.sp),
+                child: Align(
+                  alignment: Alignment.centerLeft,
+                  child: Text(
+                    userModel!.name,
+                    style: TextStyle(
+                      fontSize: 15.sp,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ),
+              ),
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: 15.sp),
+                child: Align(
+                  alignment: Alignment.centerLeft,
+                  child: Text(
+                    userModel!.bio,
+                    style: TextStyle(
+                      fontSize: 15.sp,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ),
+              ),
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: 15.sp),
+                child: Align(
+                  alignment: Alignment.centerLeft,
+                  child: InkWell(
+                    onTap: () async {
+                      Uri uri = Uri.parse(userModel!.addLink);
+                      if(await canLaunchUrl(uri)) {
+                        launchUrl(uri);
+                      } else {
+                        print('Cannot launch Url');
+                      }
+                    },
+                    child: Text(
+                      userModel!.addLink,
+                      style: TextStyle(
+                        color: Colors.blue,
+                        fontSize: 15.sp,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ),
+                ),
               ),
               SizedBox(
                 height: 30.h,
@@ -67,7 +149,8 @@ class _ProfileViewState extends State<ProfileView> {
                       ),
                       itemBuilder: (context, index) {
                         return SizedBox(
-                          child: Image.network('https://www.google.com/search?q=coursera&sxsrf=ALiCzsbhOv0xp9pzeeRnDdBEXEmb3U1awQ:1667995686278&source=lnms&tbm=isch&sa=X&ved=2ahUKEwjy-veSiKH7AhXLCOwKHb5sBuoQ_AUoAnoECAEQBA&biw=908&bih=873&dpr=0.75#imgrc=Ke8GDqG5av7lpM',
+                          child: Image.network(
+                            userModel!.profileImage,
                             fit: BoxFit.fill,
                           ),
                         );
@@ -84,7 +167,7 @@ class _ProfileViewState extends State<ProfileView> {
     return InkWell(
       onTap: () {
         if(isCurrentUser) {
-          Navigator.push(context, MaterialPageRoute(builder: (context) => const EditView()));
+          Navigator.push(context, MaterialPageRoute(builder: (context) => EditView(userModel: userModel!,)));
         } else {
           //Follow functionality
         }
